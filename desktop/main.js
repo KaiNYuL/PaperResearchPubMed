@@ -47,12 +47,17 @@ function startBackend() {
   const logPath = path.join(app.getPath("userData"), "backend.log");
   const logStream = fs.createWriteStream(logPath, { flags: "a" });
   const dataDir = path.join(app.getPath("userData"), "data");
+  const runtimeDir = path.join(backendDir, "runtime");
+  const runtimeDlls = path.join(runtimeDir, "DLLs");
+  const runtimeBin = path.join(runtimeDir, "Library", "bin");
+  const pathParts = [runtimeDir, runtimeDlls, runtimeBin, process.env.PATH || ""];
   backendProcess = spawn(pythonPath, [scriptPath], {
     cwd: backendDir,
     env: {
       ...process.env,
       PAPER_AGENT_DATA_DIR: dataDir,
       PYTHONNOUSERSITE: "1",
+      PATH: pathParts.filter(Boolean).join(path.delimiter),
     },
     stdio: ["ignore", "pipe", "pipe"],
   });
