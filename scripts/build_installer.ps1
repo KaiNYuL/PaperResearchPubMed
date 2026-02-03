@@ -1,22 +1,36 @@
 param(
-    [string]$DesktopDir = "${PSScriptRoot}\..\desktop"
+	[string]$DesktopDir = "${PSScriptRoot}\..\desktop",
+	[string]$FrontendScript = "${PSScriptRoot}\build_frontend.ps1",
+	[string]$BackendScript = "${PSScriptRoot}\build_backend.ps1"
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 if (-not (Test-Path $DesktopDir)) {
-    throw "desktop 目录不存在：$DesktopDir"
+	throw "Desktop directory not found: $DesktopDir"
+}
+
+if (Test-Path $FrontendScript) {
+	& $FrontendScript
+} else {
+	throw "Frontend build script not found: $FrontendScript"
+}
+
+if (Test-Path $BackendScript) {
+	& $BackendScript
+} else {
+	throw "Backend build script not found: $BackendScript"
 }
 
 Push-Location $DesktopDir
 try {
-    if (-not (Test-Path "node_modules")) {
-        npm install
-    }
-    npm run build
+	if (-not (Test-Path "node_modules")) {
+		npm install
+	}
+	npm run build
 } finally {
-    Pop-Location
+	Pop-Location
 }
 
-Write-Host "安装包已生成 -> $DesktopDir\dist"
+Write-Host "Installer build completed -> $DesktopDir\dist"

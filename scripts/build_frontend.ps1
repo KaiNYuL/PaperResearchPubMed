@@ -7,14 +7,24 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 if (-not (Test-Path $FrontendDir)) {
-    throw "frontend 目录不存在：$FrontendDir"
+    throw "Frontend directory not found: $FrontendDir"
 }
 
 Push-Location $FrontendDir
 try {
+    $hasLock = Test-Path "package-lock.json"
     if (-not (Test-Path "node_modules")) {
-        npm install
+        if ($hasLock) {
+            npm ci
+        } else {
+            npm install
+        }
     }
+
+    if (Test-Path "dist") {
+        Remove-Item "dist" -Recurse -Force
+    }
+
     npm run build
 } finally {
     Pop-Location
@@ -24,6 +34,12 @@ if (Test-Path $OutDir) {
     Remove-Item $OutDir -Recurse -Force
 }
 New-Item -ItemType Directory -Path $OutDir | Out-Null
-Copy-Item -Path (Join-Path $FrontendDir "dist\*") -Destination $OutDir -Recurse -Force
 
-Write-Host "前端构建完成 -> $OutDir"
+$distDir = Join-Path $FrontendDir "dist"
+if (-not (Test-Path $distDir)) {
+    throw "Frontend build failed: dist folder not found."
+}
+
+Get-ChildItem -Path $distDir | Copy-Item -Destination $OutDir -Recurse -Force
+
+Write-Host "Frontend build completed -> $OutDir"

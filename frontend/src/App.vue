@@ -1,30 +1,42 @@
 <template>
   <div class="app" :class="themeClass">
-    <header class="header">
-      <div class="title">论文智能获取与总结</div>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-text">PaperResearch</span>
+      </div>
       <button class="settings-btn" @click="settingsVisible = true">设置</button>
     </header>
 
-    <section class="input-section">
-      <label class="section-title">检索需求</label>
-      <textarea
-        v-model="query"
-        class="query-input"
-        placeholder="2024-2026 年 糖尿病 机器学习 治疗"
-        rows="4"
-      ></textarea>
-      <div class="input-actions">
-        <div class="count-box">
-          <label>数量</label>
-          <input type="number" min="1" max="50" v-model.number="count" />
-        </div>
-        <button class="primary" @click="onCrawl" :disabled="loading">
-          {{ loading ? "处理中..." : "开始爬取" }}
-        </button>
-        <button class="ghost" @click="clearOutput">清空输出</button>
+    <main class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">论文智能获取与总结</h1>
+        <p class="hero-subtitle">
+          一站式 PubMed 检索与整理，自动提取关键字与摘要，快速输出结构化文档。
+        </p>
+
+        <section class="input-section">
+          <label class="section-title">检索需求</label>
+          <textarea
+            v-model="query"
+            class="query-input"
+            placeholder="2024-2026 年 糖尿病 机器学习 治疗"
+            rows="4"
+          ></textarea>
+          <div class="input-actions">
+            <div class="count-box">
+              <label>数量</label>
+              <input type="number" min="1" max="50" v-model.number="count" />
+            </div>
+            <button class="primary" @click="onCrawl" :disabled="loading">
+              {{ loading ? "处理中..." : "开始爬取" }}
+            </button>
+            <button class="ghost" @click="clearOutput">清空输出</button>
+          </div>
+          <div class="hint" v-if="hint">{{ hint }}</div>
+        </section>
       </div>
-      <div class="hint" v-if="hint">{{ hint }}</div>
-    </section>
+    </main>
 
     <section class="output-section">
       <div class="section-title">输出示例（前 2 篇）</div>
@@ -308,21 +320,36 @@ onMounted(loadConfig);
   font-family: "Segoe UI", "PingFang SC", sans-serif;
   color: #1f2d3d;
   min-height: 100vh;
-  background: #f5f7fa;
-  padding: 24px;
+  background: linear-gradient(180deg, #f6f7fb 0%, #ffffff 42%);
+  padding: 28px 28px 48px;
   box-sizing: border-box;
 }
 
-.header {
+.topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
-.title {
-  font-size: 24px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 600;
+  color: #25324b;
+}
+
+.brand-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6f91, #5f6bff);
+  box-shadow: 0 6px 12px rgba(95, 107, 255, 0.3);
+}
+
+.brand-text {
+  letter-spacing: 0.4px;
 }
 
 .settings-btn {
@@ -334,12 +361,40 @@ onMounted(loadConfig);
   cursor: pointer;
 }
 
-.input-section,
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-size: 40px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: #1f2d3d;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  color: #5a6b87;
+}
+
+.input-section {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(20, 30, 60, 0.08);
+}
+
 .output-section {
   background: #ffffff;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(20, 30, 60, 0.06);
   margin-bottom: 20px;
 }
 
@@ -351,10 +406,11 @@ onMounted(loadConfig);
 
 .query-input {
   width: 100%;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  padding: 12px;
+  border: 1px solid #e2e6ef;
+  border-radius: 12px;
+  padding: 12px 14px;
   font-size: 14px;
+  background: #fbfcff;
 }
 
 .input-actions {
@@ -362,6 +418,7 @@ onMounted(loadConfig);
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .count-box {
@@ -371,20 +428,21 @@ onMounted(loadConfig);
 }
 
 .primary {
-  background: #2b6de0;
+  background: linear-gradient(135deg, #5f6bff, #3e8cff);
   color: white;
   border: none;
   padding: 10px 18px;
-  border-radius: 6px;
+  border-radius: 999px;
   cursor: pointer;
+  box-shadow: 0 10px 20px rgba(63, 123, 255, 0.25);
 }
 
 .ghost {
   background: transparent;
-  border: 1px solid #c0c4cc;
-  color: #606266;
+  border: 1px solid #d6dbe6;
+  color: #5b6475;
   padding: 10px 18px;
-  border-radius: 6px;
+  border-radius: 999px;
   cursor: pointer;
 }
 
@@ -426,7 +484,7 @@ onMounted(loadConfig);
 .output-box {
   max-height: 320px;
   overflow-y: auto;
-  background: #fafafa;
+  background: #f7f8fc;
   padding: 12px;
   border-radius: 8px;
 }
@@ -444,12 +502,13 @@ onMounted(loadConfig);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 20;
 }
 
 .settings-card {
   width: 480px;
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px;
 }
 
