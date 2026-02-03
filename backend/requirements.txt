@@ -1,0 +1,12 @@
+fastapi==0.115.5
+uvicorn==0.32.1
+flask==3.0.3
+requests==2.32.3
+beautifulsoup4==4.12.3
+markdown==3.6
+pyyaml==6.0.2
+python-docx==1.1.2
+pymed==0.8.9
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-openai==0.1.17

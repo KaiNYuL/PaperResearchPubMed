@@ -1,0 +1,30 @@
+# Node
+node_modules/
+desktop/node_modules/
+
+# Build outputs
+frontend/dist/
+desktop/dist/
+desktop/renderer/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# Bundled runtime
+backend/runtime/
+desktop/backend/runtime/
+
+# Logs
+*.log
+
+# App data
+backend/data/
+desktop/backend/data/
+
+# OS
+.DS_Store
+Thumbs.db
