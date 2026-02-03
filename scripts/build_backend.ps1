@@ -23,10 +23,9 @@ Copy-Item -Path (Join-Path $BackendDir "*") -Destination $DesktopBackendDir -Rec
 
 Write-Host "后端代码已同步 -> $DesktopBackendDir"
 
-if ($PythonExe -eq "python") {
-    $candidate = "C:\Users\KN\AppData\Local\Programs\Python\Python311\python.exe"
-    if (Test-Path $candidate) {
-        $PythonExe = $candidate
+if ($PythonExe -eq "python" -and $env:PAPER_AGENT_PYTHON) {
+    if (Test-Path $env:PAPER_AGENT_PYTHON) {
+        $PythonExe = $env:PAPER_AGENT_PYTHON
     }
 }
 

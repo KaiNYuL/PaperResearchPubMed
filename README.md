@@ -11,8 +11,9 @@
 
 ### 后端
 
-1. 进入 backend 目录，安装依赖。
-2. 运行 Flask 服务（默认 8000 端口）。
+1. 确保本机已安装 Python（推荐 3.9+），并已加入 PATH。
+2. 在 backend 目录创建虚拟环境并安装依赖（requirements.txt）。
+3. 运行 Flask 服务（默认 8000 端口）。
 
 ### 前端
 
@@ -22,15 +23,34 @@
 ### Electron 开发
 
 1. 构建前端产物到 desktop/renderer。
-2. 启动 Electron（将使用系统 python 或环境变量 `PAPER_AGENT_PYTHON`）。
+2. 启动 Electron（将使用系统 Python，或通过环境变量 `PAPER_AGENT_PYTHON` 指定 Python 路径）。
 
 ## 打包说明（生成安装包）
 
 > 以下脚本均位于 scripts 目录，适配 Windows PowerShell。
 
 1. 前端构建：运行 scripts/build_frontend.ps1，将产物输出到 desktop/renderer。
-2. 后端运行时：运行 scripts/build_backend.ps1，将依赖安装到 desktop/backend/runtime。
+2. 后端依赖：运行 scripts/build_backend.ps1，在本机 Python 环境下安装依赖（无需硬编码路径）。
 3. 安装包生成：运行 scripts/build_installer.ps1，输出在 desktop/dist。
+
+> 说明：当前打包默认不内置 Python 运行时，目标用户需自行准备 Python 环境或在运行时通过 `PAPER_AGENT_PYTHON` 指定。
+
+### 后端打包环境配置（必读）
+
+1. 安装 Python 3.9+（建议 3.10），并确保 `python` 与 `pip` 可在终端直接使用。
+2. 如需指定 Python 路径，设置环境变量 `PAPER_AGENT_PYTHON` 为完整解释器路径。
+3. 运行 scripts/build_backend.ps1，会基于当前 Python 创建 runtime 并安装依赖。
+4. 如果下载源码后第一次打包较慢，这是依赖安装阶段，属正常情况。
+
+## 自助部署（给有工程能力的用户）
+
+1. 安装 Node.js（用于前端与 Electron）。
+2. 安装 Python 3.9+ 并加入 PATH。
+3. 后端：进入 backend 目录，创建虚拟环境并安装 requirements.txt。
+4. 前端：进入 frontend 目录，安装依赖并构建产物到 desktop/renderer。
+5. Electron：进入 desktop 目录，安装依赖后启动或打包。
+
+> 可选：设置环境变量 `PAPER_AGENT_PYTHON`，显式指定后端使用的 Python 解释器路径。
 
 ## 关键技术栈
 
