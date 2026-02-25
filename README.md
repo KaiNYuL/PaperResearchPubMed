@@ -42,6 +42,44 @@
 3. 运行 scripts/build_backend.ps1，会基于当前 Python 创建 runtime 并安装依赖。
 4. 如果下载源码后第一次打包较慢，这是依赖安装阶段，属正常情况。
 
+## Docker 容器化部署（推荐）
+
+适用于在任意电脑上快速部署前后端服务。
+
+### 环境要求
+
+1. 安装 Docker 与 Docker Compose。
+2. 可访问外网（用于拉取镜像与访问 PubMed）。
+
+### 部署流程（从 git clone 开始）
+
+1. 克隆代码并进入目录：
+
+	```bash
+	git clone https://github.com/KaiNYuL/PaperResearchPubMed.git
+	cd PaperResearchPubMed
+	```
+
+2. 构建并启动容器：
+
+	```bash
+	docker compose up -d --build
+	```
+
+3. 访问服务：
+
+	- 前端：`http://<服务器IP>:5173`
+	- 后端：`http://<服务器IP>:8000`
+	- 后端文档：`http://<服务器IP>:8000/docs`
+
+4. 首次使用需在前端右上角“设置”中填写 `API 地址` 与 `API Key`，保存后即可使用大模型能力。
+
+### 常见问题
+
+- 若前端请求超时，可等待更长时间或减小检索数量。
+- 若爬取结果为空，请确认容器可访问外网，且模型配置已保存成功。
+- 若需要在内网使用，请为 Docker 配置代理或内网镜像源。
+
 ## 自助部署（给有工程能力的用户）
 
 1. 安装 Node.js（用于前端与 Electron）。
