@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
+from .config import DATA_DIR
 
 
 def _render_markdown(papers: List[Dict[str, Any]]) -> str:
@@ -42,7 +43,8 @@ def _render_txt(papers: List[Dict[str, Any]]) -> str:
 
 def export_docs(papers: List[Dict[str, Any]], fmt: str, output_dir: str | None, filename: str | None) -> str:
     fmt = (fmt or "markdown").lower()
-    output_path = Path(output_dir or Path.cwd())
+    default_dir = DATA_DIR / "exports"
+    output_path = Path(output_dir) if output_dir else default_dir
     output_path.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
