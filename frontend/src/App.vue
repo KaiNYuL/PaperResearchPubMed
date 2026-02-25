@@ -131,6 +131,10 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
 
+const apiBaseRaw = import.meta.env.VITE_API_BASE_URL || "";
+const apiBase = apiBaseRaw.replace(/\/+$/, "");
+const apiUrl = (path) => `${apiBase}${path}`;
+
 const query = ref("");
 const count = ref(10);
 const hint = ref("");
@@ -181,7 +185,7 @@ const onCrawl = async () => {
   }
   loading.value = true;
   try {
-    const { data } = await axios.post("http://127.0.0.1:8000/api/crawl_paper", {
+    const { data } = await axios.post(apiUrl("/api/crawl_paper"), {
       query: query.value,
       count: count.value,
     });
@@ -225,7 +229,7 @@ const exportDoc = async () => {
       showToast("没有可导出的论文数据");
       return;
     }
-    const { data } = await axios.post("http://127.0.0.1:8000/api/export_doc", {
+    const { data } = await axios.post(apiUrl("/api/export_doc"), {
       papers: exportPapers,
       format: "markdown",
     });
@@ -279,7 +283,7 @@ const highlightText = (text) => {
 
 const loadConfig = async () => {
   try {
-    const { data } = await axios.get("http://127.0.0.1:8000/api/get_config");
+    const { data } = await axios.get(apiUrl("/api/get_config"));
     if (data.code === 0) {
       Object.assign(config, data.data);
     }
@@ -290,7 +294,7 @@ const loadConfig = async () => {
 
 const saveConfig = async () => {
   try {
-    const { data } = await axios.post("http://127.0.0.1:8000/api/save_config", config);
+    const { data } = await axios.post(apiUrl("/api/save_config"), config);
     if (data.code === 0) {
       showToast("配置已保存");
       settingsVisible.value = false;
