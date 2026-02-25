@@ -23,6 +23,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "docs": "/docs"}
+
+
 @app.get("/api/get_config")
 async def get_config():
     return handle_get_config()
