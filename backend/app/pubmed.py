@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import time
 from typing import Dict, List, Optional
 from xml.etree import ElementTree
@@ -59,14 +60,27 @@ def _build_esearch_params(query: str, start_year: Optional[int], end_year: Optio
     return params
 
 
+def _request_with_retry(url: str, params: Dict[str, str], timeout: int) -> requests.Response:
+    retries = int(os.getenv("PUBMED_RETRIES", "3"))
+    backoff = float(os.getenv("PUBMED_RETRY_BACKOFF", "1.5"))
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, params=params, timeout=timeout)
+            resp.raise_for_status()
+            return resp
+        except Exception:
+            if attempt >= retries - 1:
+                raise
+            time.sleep(backoff * (attempt + 1))
+
+
 def _search_with_eutils(query: str, start_year: Optional[int], end_year: Optional[int], max_results: int) -> List[Dict[str, object]]:
     base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
     esearch = f"{base}/esearch.fcgi"
     efetch = f"{base}/efetch.fcgi"
 
     params = _build_esearch_params(query, start_year, end_year, max_results)
-    resp = requests.get(esearch, params=params, timeout=20)
-    resp.raise_for_status()
+    resp = _request_with_retry(esearch, params=params, timeout=20)
 
     root = ElementTree.fromstring(resp.text)
     id_list = [elem.text for elem in root.findall(".//IdList/Id") if elem.text]
@@ -78,8 +92,7 @@ def _search_with_eutils(query: str, start_year: Optional[int], end_year: Optiona
         "id": ",".join(id_list),
         "retmode": "xml",
     }
-    fetch_resp = requests.get(efetch, params=fetch_params, timeout=30)
-    fetch_resp.raise_for_status()
+    fetch_resp = _request_with_retry(efetch, params=fetch_params, timeout=30)
     fetch_root = ElementTree.fromstring(fetch_resp.text)
 
     papers: List[Dict[str, object]] = []
@@ -124,8 +137,7 @@ def _search_with_eutils(query: str, start_year: Optional[int], end_year: Optiona
 
 
 def _parse_pubmed_article_page(url: str) -> Dict[str, object]:
-    resp = requests.get(url, timeout=20)
-    resp.raise_for_status()
+    resp = _request_with_retry(url, params={}, timeout=20)
     soup = BeautifulSoup(resp.text, "html.parser")
 
     title = _clean_text(soup.select_one("h1.heading-title").get_text(" ", strip=True) if soup.select_one("h1.heading-title") else "")
@@ -160,8 +172,7 @@ def _parse_pubmed_article_page(url: str) -> Dict[str, object]:
 
 def _search_with_html(query: str, max_results: int) -> List[Dict[str, object]]:
     base = "https://pubmed.ncbi.nlm.nih.gov"
-    resp = requests.get(base + "/", params={"term": query}, timeout=20)
-    resp.raise_for_status()
+    resp = _request_with_retry(base + "/", params={"term": query}, timeout=20)
     soup = BeautifulSoup(resp.text, "html.parser")
     links = []
     for link in soup.select("a.docsum-title"):  # search results
