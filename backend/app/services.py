@@ -206,6 +206,20 @@ def crawl_papers(user_query: str, count: int | None, config: Dict[str, Any] | No
             }
         )
 
+    if not enriched and papers:
+        for paper in papers:
+            enriched.append(
+                {
+                    "title": paper.get("title", ""),
+                    "keywords": paper.get("keywords", []),
+                    "abstract": paper.get("abstract", ""),
+                    "match_dimension": "未匹配",
+                    "published_date": paper.get("published_date", ""),
+                    "doi": paper.get("doi"),
+                    "authors": paper.get("authors", []),
+                }
+            )
+
     enriched.sort(key=lambda x: (x.get("_rank", 99), x.get("published_date", "")), reverse=False)
     for item in enriched:
         item.pop("_rank", None)
