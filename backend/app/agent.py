@@ -99,7 +99,7 @@ def _direct_llm_parse(text: str, config: Dict[str, object]) -> Dict[str, object]
         model=config.get("ai_model", "gpt-3.5-turbo"),
         api_key=api_key,
         base_url=config.get("api_base", "https://api.openai.com/v1"),
-        temperature=0,
+        temperature=1,
     )
 
     try:
@@ -161,7 +161,7 @@ def parse_user_query_with_langchain(text: str, config: Dict[str, object]) -> Dic
         model=config.get("ai_model", "gpt-3.5-turbo"),
         api_key=api_key,
         base_url=config.get("api_base", "https://api.openai.com/v1"),
-        temperature=0,
+        temperature=1,
     )
 
     try:

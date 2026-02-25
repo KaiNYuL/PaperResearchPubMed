@@ -50,7 +50,7 @@ def _translate_keywords(keywords: List[str], config: Dict[str, Any]) -> List[str
         model=config.get("ai_model", "gpt-3.5-turbo"),
         api_key=api_key,
         base_url=config.get("api_base", "https://api.openai.com/v1"),
-        temperature=0,
+        temperature=1,
     )
 
     try:
